@@ -1,0 +1,12 @@
+
+source_files=$(cat <<EOF
+generator.c
+help.c
+info.c
+labelHandler.c
+psw.c
+pswUtil.c
+EOF
+)
+
+gcc $source_files -I./include -o ../bin/v0.9/psw
