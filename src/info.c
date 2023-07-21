@@ -21,7 +21,7 @@ void printInfo() {
 }
 
 // Prints reduced information.
-void printRInfo() {
+void printBriefInfo() {
 	printf("Personal Password Generator and Manager.\n"
 	       "Version: %s\n"
 	       "Last update: %s\n"

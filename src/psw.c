@@ -32,13 +32,15 @@
 #include "info.h"
 #include "pswUtil.h"
 
+const unsigned int MAX_PASSWORD_LEN = 255;
+
 int main(int argc, char **argv) {
     
     int ERR_ARGID;
     
     // Checking zero arguments case.
     if(argc == 1) {
-        printRInfo();
+        printBriefInfo();
         return 0;
     }
 
@@ -79,16 +81,16 @@ int main(int argc, char **argv) {
             goto LERR_UNEXPECTED_ARGS_NUMBER;
         }
         
+        FLAGS += u_ParseUInt(argv[2]);
         // check the anticipated range 1..255
-        if(!(1 < (FLAGS += u_ParseUInt(argv[2])) < 255)) {
+        if(FLAGS > 255 || FLAGS < 1) {
             ERR_ARGID = 2;
             goto LERR_UNEXPECTED_ARGS_NUMBER_SIZE;
         }
-        printf("%d\n", FLAGS % 0xff);
+
         // set flags
         
-        
-        //printf("Your password: %s\n", generatePassword(FLAGS));
+        printf("Your password: %s\n", generatePassword(FLAGS));
         
     // wrong first argument error handling:
     } else {

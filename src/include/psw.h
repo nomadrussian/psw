@@ -1,4 +1,4 @@
 /* psw.h */
 
-const char *VERSION = "v0.0";
-const char *LAST_UPD = "July 20th, 2023";
+const char *VERSION = "v0.1";
+const char *LAST_UPD = "July 21th, 2023";

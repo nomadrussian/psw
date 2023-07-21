@@ -1,6 +1,5 @@
 /* pswUtil.c - custom functions for password generator and manager */
 #include <string.h>
-#include <stdio.h>
 
 // Checks if a string contains only a pure number. 1 - true, 0 - false.
 int u_CheckIfPureUInt(const char *s) {
@@ -20,7 +19,7 @@ int u_CheckIfPureUInt(const char *s) {
     return 1;
 }
 
-// Gets a string containing a pure number and returns it as an integer.
+// Gets a string containing a number and returns it as an unsigned int.
 // It doesn't care if it's correct, anticipating it has been checked.
 unsigned int u_ParseUInt(const char *s) {
     
