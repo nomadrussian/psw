@@ -71,21 +71,29 @@ int main(int argc, char **argv) {
             return 0;
         }
         
-        int FLAGS = 0x00000000;
+        unsigned int FLAGS = 0x00000000;
         
         // the second argument has to be a number
-        if(!u_checkIfPureNum(argv[2])) {
+        if(!u_CheckIfPureUInt(argv[2])) {
             ERR_ARGID = 2;
             goto LERR_UNEXPECTED_ARGS_NUMBER;
         }
         
-        printf("Your password: %s\n", generatePassword(FLAGS));
+        // check the anticipated range 1..255
+        if(!(1 < (FLAGS += u_ParseUInt(argv[2])) < 255)) {
+            ERR_ARGID = 2;
+            goto LERR_UNEXPECTED_ARGS_NUMBER_SIZE;
+        }
+        printf("%d\n", FLAGS % 0xff);
+        // set flags
+        
+        
+        //printf("Your password: %s\n", generatePassword(FLAGS));
         
     // wrong first argument error handling:
     } else {
         ERR_ARGID = 1;
         goto LERR_UNEXPECTED_ARGS;
-        return 1;
     }
 
     return 0;
@@ -98,7 +106,13 @@ LERR_UNEXPECTED_ARGS:
     return 1;
 LERR_UNEXPECTED_ARGS_NUMBER:
     printf("PASSWORD GENERATOR ERROR: UNEXPECTED ARGUMENT \'%s\'\n"
-           "ANTICIPATED <number:1_255>\n"
+           "ANTICIPATED <number:1..255>\n"
+           "USE 'help' TO GET MORE INFORMATION ABOUT AVAILABLE "
+           "ARGUMENT OPTIONS.\n", argv[ERR_ARGID]);
+    return 1;
+LERR_UNEXPECTED_ARGS_NUMBER_SIZE:
+    printf("PASSWORD GENERATOR ERROR: UNEXPECTED LENGTH SIZE \'%s\'\n"
+           "ANTICIPATED RANGE: <1..255>\n"
            "USE 'help' TO GET MORE INFORMATION ABOUT AVAILABLE "
            "ARGUMENT OPTIONS.\n", argv[ERR_ARGID]);
     return 1;

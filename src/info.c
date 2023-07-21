@@ -3,6 +3,7 @@
 #include <stdio.h>
 #include "psw.h"
 
+// Prints general information about the program.
 void printInfo() {
 	printf("Personal Password Generator and Manager.\n"
 	       "Version: %s\n"
@@ -19,10 +20,10 @@ void printInfo() {
 	       "Use 'help' for more information.\n", VERSION, LAST_UPD);
 }
 
+// Prints reduced information.
 void printRInfo() {
 	printf("Personal Password Generator and Manager.\n"
 	       "Version: %s\n"
 	       "Last update: %s\n"
 	       "Use info/help for more information.\n", VERSION, LAST_UPD);
 }
-
