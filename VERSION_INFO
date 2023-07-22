@@ -1,0 +1,44 @@
+*****************************
+*    PSW VERSION HISTORY    *
+*****************************
+
+-----------------------------
+|                           |
+|   v0.0 : July 20, 2023    |
+|                           | 
+----------------------------------------------
+1) Starting point of development.
+2) Basic structure of the program was created.
+3) Command 'info' implemented.
+4) Basic error handling system implemented.
+----------------------------------------------
+
+-----------------------------
+|                           |
+|   v0.1 : July 21, 2023    |
+|                           | 
+-------------------------------------------------------------
+1) Default random generation test with 'gen <length:1..255>'.
+2) Improved architecture.
+-------------------------------------------------------------
+
+-----------------------------
+|                           |
+|   v0.2 : July 22, 2023    |
+|                           | 
+-----------------------------------------------------------------------------
+1) New system of optional 'gen' arguments: $ psw gen <length:1..255> [FLAGS]
+   List of arguments in [FLAGS]:
+       1) '-l' includes lowercase letters
+       2) '-L' includes uppercase letters
+       3) '-s' includes special symbols !@#$%^&*()
+       4) '-S' includes additional symbols "'+,-./:;<=>?[\]_'{|}~ and <space>
+   The order of FLAGS is optional, but in case of using them, 'gen' command
+   requires specified length.
+2) In case there're no arguments after 'gen', PSW will proceed with default
+   generation. Default options are equivalent to:
+       'gen 12 -l -L -s'.
+3) In case there's only length specified, the equivalent is:
+       'gen <length:1..255> -l -L -s'.
+-----------------------------------------------------------------------------
+

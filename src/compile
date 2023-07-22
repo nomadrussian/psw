@@ -9,4 +9,5 @@ pswUtil.c
 EOF
 )
 
-gcc $source_files -I./include -o ../bin/v0.1/psw
+gcc $source_files -I./include -o ../bin/v0.2/psw
+

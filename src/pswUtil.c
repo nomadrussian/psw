@@ -1,12 +1,13 @@
 /* pswUtil.c - custom functions for password generator and manager */
+
 #include <string.h>
 
 // Checks if a string contains only a pure number. 1 - true, 0 - false.
-int u_CheckIfPureUInt(const char *s) {
+unsigned int u_CheckIfPureUInt(const char *s) {
    
     unsigned int len = strlen(s);
     
-    if(len == 0 || len > 9) {
+    if(len == 0 || len > 10) {
         return 0;
     }
     
@@ -36,4 +37,22 @@ unsigned int u_ParseUInt(const char *s) {
     }
     
     return ui;
+}
+
+// indices start from 0
+unsigned int u_GetBit(int number, unsigned int index) {
+    return (number >> index) % 2;
+}
+
+// checks if a string is present in an array of strings
+unsigned int u_StringInArray(const char **sArr, size_t sArr_size, const char *s) {
+
+    for(size_t i = 0; i < sArr_size; i++) {
+        if (sArr[i] == NULL) break;
+        if(!strcmp(sArr[i], s)) {
+            return 1;
+        }
+    }
+    
+    return 0;
 }

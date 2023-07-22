@@ -3,7 +3,7 @@
  * This program is designed for a personal use to make your password
  * management easier and more convenient.
  *
- * PSW v.1.0 Abilities:
+ * PSW Abilities:
  * 1. Generate a new password with optional strength:
  *     1.1 Preferable length is defined by a number, up to 255 symbols;
  *     1.2 -l option activates lower case English letters;
@@ -11,14 +11,14 @@
  *     1.4 -d or -D activates digits 0..9;
  *     1.5 -s activates special symbols !@#$%^&...etc;
  *     1.6 -S activates additional special symbols;
- *     1.7 In general: $psw genl <label> <length> <options>;
+ *     1.7 In general: $ psw genl <label> <length> <options>;
  * 2. Save the new password under a label (e.g. a website name), so
- *    you can recall it if you need. E.g. $psw recall <label>;
+ *    you can recall it if you need. E.g. $ psw recall <label>;
  * 3. If a label is not needed (e.g for a test, or just for generation),
  *    then just $gen <length> <options> <number_of_passwords>;
  *    if <num_of_passwords> is not gotten, then it generates just one;
  * 4. Show the list of your labels in alphabetic order: $psw lb;
- *    to list it including your passwords: $psw lb_unsafe;
+ *    to list it including your passwords: $ psw lb_unsafe;
  * 5. To remove the password from the list, use $psw rm <label>, it asks
  *    confirmation; BE CAREFUL - the action cannot be undone.
  * ---------------------------------------------------------------------
@@ -28,13 +28,18 @@
 
 #include <stdio.h>
 #include <string.h>
+
 #include "generator.h"
 #include "info.h"
 #include "pswUtil.h"
 
 const unsigned int MAX_PASSWORD_LEN = 255;
 
-int main(int argc, char **argv) {
+const char *AVLBLGENINSTR[] = {"-d", "-D", "-l", "-L", "-s", "-S"};
+const size_t AVLBLGENINSTRLEN = sizeof(AVLBLGENINSTR) 
+                                / sizeof(AVLBLGENINSTR[0]);
+
+int main(int argc, const char **argv) {
     
     int ERR_ARGID;
     
@@ -67,13 +72,15 @@ int main(int argc, char **argv) {
     // 'gen' argument processing:
     } else if (!strcmp(argv[1], "gen")) {
         
-        // if the only argument is 'gen', just default generation
+        unsigned int FLAGS = 0x0000;
+
+        // if the only argument is 'gen'
         if(argc == 2) {
-            printf("Default automatic generation: %s\n", generatePassword(0));
+            // default generation: all flags except extended symbols, length = 12
+            FLAGS = 0x0F0C;
+            printf("Default automatic generation: %s\n", generatePassword(FLAGS));
             return 0;
         }
-        
-        unsigned int FLAGS = 0x00000000;
         
         // the second argument has to be a number
         if(!u_CheckIfPureUInt(argv[2])) {
@@ -81,15 +88,50 @@ int main(int argc, char **argv) {
             goto LERR_UNEXPECTED_ARGS_NUMBER;
         }
         
+        // specifying the length
         FLAGS += u_ParseUInt(argv[2]);
-        // check the anticipated range 1..255
-        if(FLAGS > 255 || FLAGS < 1) {
+        
+        // checking the anticipated range 1..255
+        if(FLAGS > 0x00ff || FLAGS < 0x0001) {
             ERR_ARGID = 2;
             goto LERR_UNEXPECTED_ARGS_NUMBER_SIZE;
         }
-
-        // set flags
         
+        // if only length is specified
+        if(argc == 3) {
+            // default generation: all flags except extended symbols
+            FLAGS += 0x0F00;
+            printf("Your password: %s\n", generatePassword(FLAGS));
+            return 0;
+        }
+        
+        // check if gotten flags are correct
+        for(int i = 3; i <= argc - 1; i++) {
+            if(!u_StringInArray(AVLBLGENINSTR, AVLBLGENINSTRLEN, argv[i])) {
+                ERR_ARGID = i;
+                goto LERR_UNEXPECTED_ARGS;
+            }
+        }
+        
+        // set flags
+        if(u_StringInArray(argv, argc, "-d") 
+        || u_StringInArray(argv, argc, "-D")) {
+            FLAGS += (1 << 0x8);
+        }
+        if(u_StringInArray(argv, argc, "-l")) {
+            FLAGS += (1 << 0x9);
+        }
+        if(u_StringInArray(argv, argc, "-L")) {
+            FLAGS += (1 << 0xA);
+        }
+        if(u_StringInArray(argv, argc, "-s")) {
+            FLAGS += (1 << 0xB);
+        }
+        if(u_StringInArray(argv, argc, "-S")) {
+            FLAGS += (1 << 0xC);
+        }
+        
+        // custom generation
         printf("Your password: %s\n", generatePassword(FLAGS));
         
     // wrong first argument error handling:
@@ -108,7 +150,7 @@ LERR_UNEXPECTED_ARGS:
     return 1;
 LERR_UNEXPECTED_ARGS_NUMBER:
     printf("PASSWORD GENERATOR ERROR: UNEXPECTED ARGUMENT \'%s\'\n"
-           "ANTICIPATED <number:1..255>\n"
+           "ANTICIPATED <length:1..255>\n"
            "USE 'help' TO GET MORE INFORMATION ABOUT AVAILABLE "
            "ARGUMENT OPTIONS.\n", argv[ERR_ARGID]);
     return 1;
