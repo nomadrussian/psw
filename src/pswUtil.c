@@ -45,7 +45,7 @@ unsigned int u_GetBit(int number, unsigned int index) {
 }
 
 // checks if a string is present in an array of strings
-unsigned int u_StringInArray(const char **sArr, size_t sArr_size, const char *s) {
+unsigned int u_StringInArray(char **sArr, size_t sArr_size, char *s) {
 
     for(size_t i = 0; i < sArr_size; i++) {
         if (sArr[i] == NULL) break;

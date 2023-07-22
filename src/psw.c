@@ -27,6 +27,7 @@
  * ------------------------------------------------------------------ */
 
 #include <stdio.h>
+#include <stdlib.h>
 #include <string.h>
 
 #include "generator.h"
@@ -35,11 +36,11 @@
 
 const unsigned int MAX_PASSWORD_LEN = 255;
 
-const char *AVLBLGENINSTR[] = {"-d", "-D", "-l", "-L", "-s", "-S"};
-const size_t AVLBLGENINSTRLEN = sizeof(AVLBLGENINSTR) 
-                                / sizeof(AVLBLGENINSTR[0]);
+char *AVLBLGENINSTR[] = {"-d", "-D", "-l", "-L", "-s", "-S"};
+size_t AVLBLGENINSTRLEN = sizeof(AVLBLGENINSTR) 
+                          / sizeof(AVLBLGENINSTR[0]);
 
-int main(int argc, const char **argv) {
+int main(int argc, char **argv) {
     
     int ERR_ARGID;
     
@@ -106,12 +107,25 @@ int main(int argc, const char **argv) {
         }
         
         // check if gotten flags are correct
+        char **duplicate_check = malloc(sizeof(AVLBLGENINSTR) * sizeof(char*));
+        
+        for(int i = 0; i < AVLBLGENINSTRLEN; i++) {
+            duplicate_check[i] = "";
+        }
+        
         for(int i = 3; i <= argc - 1; i++) {
             if(!u_StringInArray(AVLBLGENINSTR, AVLBLGENINSTRLEN, argv[i])) {
                 ERR_ARGID = i;
                 goto LERR_UNEXPECTED_ARGS;
             }
+            if(u_StringInArray(duplicate_check, AVLBLGENINSTRLEN, argv[i])) {
+                ERR_ARGID = i;
+                goto LERR_REDUNDANT_FLAGS;
+            }
+            duplicate_check[i] = argv[i];
         }
+        
+        free(duplicate_check);
         
         // set flags
         if(u_StringInArray(argv, argc, "-d") 
@@ -144,24 +158,29 @@ int main(int argc, const char **argv) {
 
     // ERROR HANDLING
 LERR_UNEXPECTED_ARGS:
-    printf("PASSWORD GENERATOR ERROR: UNEXPECTED ARGUMENT \'%s\'\n"
+    printf("PASSWORD GENERATOR ERROR: UNEXPECTED ARGUMENT \'%s\' [id:%d]\n"
            "USE 'help' TO GET MORE INFORMATION ABOUT AVAILABLE "
-           "ARGUMENT OPTIONS.\n", argv[ERR_ARGID]);
+           "ARGUMENT OPTIONS.\n", argv[ERR_ARGID], ERR_ARGID);
     return 1;
 LERR_UNEXPECTED_ARGS_NUMBER:
-    printf("PASSWORD GENERATOR ERROR: UNEXPECTED ARGUMENT \'%s\'\n"
+    printf("PASSWORD GENERATOR ERROR: UNEXPECTED ARGUMENT \'%s\' [id:%d]\n"
            "ANTICIPATED <length:1..255>\n"
            "USE 'help' TO GET MORE INFORMATION ABOUT AVAILABLE "
-           "ARGUMENT OPTIONS.\n", argv[ERR_ARGID]);
+           "ARGUMENT OPTIONS.\n", argv[ERR_ARGID], ERR_ARGID);
     return 1;
 LERR_UNEXPECTED_ARGS_NUMBER_SIZE:
-    printf("PASSWORD GENERATOR ERROR: UNEXPECTED LENGTH SIZE \'%s\'\n"
+    printf("PASSWORD GENERATOR ERROR: UNEXPECTED LENGTH SIZE \'%s\' [id:%d]\n"
            "ANTICIPATED RANGE: <1..255>\n"
            "USE 'help' TO GET MORE INFORMATION ABOUT AVAILABLE "
-           "ARGUMENT OPTIONS.\n", argv[ERR_ARGID]);
+           "ARGUMENT OPTIONS.\n", argv[ERR_ARGID], ERR_ARGID);
     return 1;
 LERR_REDUNDANT_ARGS:
-    printf("PASSWORD GENERATOR ERROR: REDUNDANT ARGUMENT(S) \'%s...\'\n"
-           "USE 'help' TO GET MORE INFORMATION.\n", argv[ERR_ARGID]);
+    printf("PASSWORD GENERATOR ERROR: REDUNDANT ARGUMENT(S) \'%s...\' [id:%d]\n"
+           "USE 'help' TO GET MORE INFORMATION.\n", argv[ERR_ARGID], ERR_ARGID);
+    return 1;
+LERR_REDUNDANT_FLAGS:
+    printf("PASSWORD GENERATOR ERROR: REDUNDANT FLAG(S) \'%s...\' [id:%d]\n"
+           "USE 'help' TO GET MORE INFORMATION.\n", argv[ERR_ARGID], ERR_ARGID);
     return 1;
 }
+

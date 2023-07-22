@@ -19,7 +19,7 @@
  *     bit   [12] : -S       | includes additional symbols "'+,-./:;<=>?[\]_
  *                           |                             `{|}~ and <space>
  * ---------------------------------------------------------------------- */
-const char *generatePassword(int FLAGS) {
+char *generatePassword(int FLAGS) {
     
     char *char_set = malloc(96 * sizeof(char));
     char *password = malloc((FLAGS % 0x100) * sizeof(char));
