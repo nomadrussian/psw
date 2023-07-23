@@ -21,7 +21,8 @@
  * ---------------------------------------------------------------------- */
 char *generatePassword(int FLAGS) {
     
-    char *char_set = malloc(96 * sizeof(char));
+    // -l + -L + -s*2 + -S*2 + -d*2 + \0 = 139
+    char *char_set = malloc(139 * sizeof(char)); 
     char *password = malloc((FLAGS % 0x100) * sizeof(char));
     
     int base_is_set = 0;
@@ -32,15 +33,22 @@ char *generatePassword(int FLAGS) {
     const char *S = "\"'+,-./:;<=>?[\\]_`{|}~ ";
     
     // setting -d or -D
-    if(u_GetBit(FLAGS, 8)) {
-        if(!base_is_set) {
-            strcpy(char_set, d);
-            base_is_set = 1;
+    if(u_GetBit(FLAGS, 0x8)) {
+        
+        strcpy(char_set, d);
+        base_is_set = 1;
+        // improve frequency in case of -l
+        if(u_GetBit(FLAGS, 0x9)) {
+            strcat(char_set, d);
+        }
+        // improve frequency in case of -L
+        if(u_GetBit(FLAGS, 0xA)) {
+            strcat(char_set, d);
         }
     }
     
     // setting -l
-    if(u_GetBit(FLAGS, 9)) {
+    if(u_GetBit(FLAGS, 0x9)) {
         if(!base_is_set) {
             strcpy(char_set, l);
             base_is_set = 1;
@@ -65,6 +73,14 @@ char *generatePassword(int FLAGS) {
             strcpy(char_set, s);
             base_is_set = 1;
         } else {
+            strcat(char_set, s);
+        }
+        // improve frequency in case of -l
+        if(u_GetBit(FLAGS, 0x9)) {
+            strcat(char_set, s);
+        }
+        // improve frequency in case of -L
+        if(u_GetBit(FLAGS, 0xA)) {
             strcat(char_set, s);
         }
     }

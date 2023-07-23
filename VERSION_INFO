@@ -29,10 +29,11 @@
 -----------------------------------------------------------------------------
 1) New system of optional 'gen' arguments: $ psw gen <length:1..255> [FLAGS]
    List of arguments in [FLAGS]:
-       1) '-l' includes lowercase letters
-       2) '-L' includes uppercase letters
-       3) '-s' includes special symbols !@#$%^&*()
-       4) '-S' includes additional symbols "'+,-./:;<=>?[\]_'{|}~ and <space>
+       1) '-d' or '-D' includes digits
+       2) '-l' includes lowercase letters
+       3) '-L' includes uppercase letters
+       4) '-s' includes special symbols !@#$%^&*()
+       5) '-S' includes additional symbols "'+,-./:;<=>?[\]_'{|}~ and <space>
    The order of FLAGS is optional, but in case of using them, 'gen' command
    requires specified length.
 2) In case there're no arguments after 'gen', PSW will proceed with default
@@ -50,3 +51,12 @@
 1) Fixed infinite 'gen' repeating flags nonsense.
 2) Since that moment PSW uses Git.
 -------------------------------------------------
+
+-----------------------------
+|                           |
+|   v0.3 : July 23, 2023    |
+|                           | 
+-------------------------------------------------------------------------
+1) Imlemented 'help' command: $ psw help [INSTRUCTION]
+2) Fixed too low -d and -s characters frequency with -l and/or -L.
+3) Fixed -d/-D options possible collision in input.

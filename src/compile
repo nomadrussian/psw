@@ -9,5 +9,5 @@ source_files=$(cat << EOF
 EOF
 )
 
-gcc $source_files -I./include -o ../bin/v0.2.1/psw
+gcc $source_files -I./include -o ../bin/v0.3/psw
 

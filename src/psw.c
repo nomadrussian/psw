@@ -1,5 +1,5 @@
 /* psw.c - the main module of the personal password manager.
- * ---------------------------------------------------------------------
+ * ----------------------------------------------------------------------
  * This program is designed for a personal use to make your password
  * management easier and more convenient.
  *
@@ -15,30 +15,31 @@
  * 2. Save the new password under a label (e.g. a website name), so
  *    you can recall it if you need. E.g. $ psw recall <label>;
  * 3. If a label is not needed (e.g for a test, or just for generation),
- *    then just $gen <length> <options> <number_of_passwords>;
+ *    then just $ gen <length> <options> <number_of_passwords>;
  *    if <num_of_passwords> is not gotten, then it generates just one;
  * 4. Show the list of your labels in alphabetic order: $psw lb;
  *    to list it including your passwords: $ psw lb_unsafe;
- * 5. To remove the password from the list, use $psw rm <label>, it asks
+ * 5. To remove the password from the list, use $ psw rm <label>, it asks
  *    confirmation; BE CAREFUL - the action cannot be undone.
- * ---------------------------------------------------------------------
+ * ----------------------------------------------------------------------
  *                        |||   WARNING   |||
  * The software is completely free, use it as you want and keep it free.
- * ------------------------------------------------------------------ */
+ * ------------------------------------------------------------------- */
 
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
 
 #include "generator.h"
+#include "help.h"
 #include "info.h"
+#include "psw.h"
 #include "pswUtil.h"
 
-const unsigned int MAX_PASSWORD_LEN = 255;
-
-char *AVLBLGENINSTR[] = {"-d", "-D", "-l", "-L", "-s", "-S"};
-size_t AVLBLGENINSTRLEN = sizeof(AVLBLGENINSTR) 
-                          / sizeof(AVLBLGENINSTR[0]);
+char *AVLBLINSTR[] = { "gen", "info", "help" };
+char *AVLBLGENINSTR[] = { "-d", "-D", "-l", "-L", "-s", "-S" };
+size_t AVLBLINSTRLEN = sizeof(AVLBLINSTR) / sizeof(AVLBLINSTR[0]);
+size_t AVLBLGENINSTRLEN = sizeof(AVLBLGENINSTR) / sizeof(AVLBLGENINSTR[0]);
 
 int main(int argc, char **argv) {
     
@@ -55,31 +56,50 @@ int main(int argc, char **argv) {
     
     // 'info' argument processing:
     if(!strcmp(argv[1], "info")) {
+        
         if(argc > 2) {
             ERR_ARGID = 2;
             goto LERR_REDUNDANT_ARGS;
         }
+        
         printInfo();
         
     // 'help' argument processing:
-    } else if (!strcmp(argv[1], "help")) {
-        if(argc > 2) {
-            ERR_ARGID = 2;
-            goto LERR_REDUNDANT_ARGS;
+    } else if(!strcmp(argv[1], "help")) {
+        
+        if(argc == 2) {
+            printMainHelp();
+        } else {
+            // handling unexpected or redundant arguments
+            if(!u_StringInArray(AVLBLINSTR, AVLBLINSTRLEN, argv[2])) {
+                ERR_ARGID = 2;
+                goto LERR_UNEXPECTED_ARGS;
+            }
+            if(argc > 3) {
+                ERR_ARGID = 3;
+                goto LERR_REDUNDANT_ARGS;
+            }
+            // printing help information
+            if(!strcmp(argv[2], "gen")) {
+                printGenHelp();
+            } else if(!strcmp(argv[2], "help")) {
+                printHelpHelp();
+            } else if(!strcmp(argv[2], "info")) {
+                printInfoHelp();
+            }
         }
-        printf("No help yet. In development.\n");
-        //printHelp();  // implement later
         
     // 'gen' argument processing:
-    } else if (!strcmp(argv[1], "gen")) {
+    } else if(!strcmp(argv[1], "gen")) {
         
         unsigned int FLAGS = 0x0000;
 
         // if the only argument is 'gen'
         if(argc == 2) {
-            // default generation: all flags except extended symbols, length = 12
+            // default generation: all flags except extended symbols, length=12
             FLAGS = 0x0F0C;
-            printf("Default automatic generation: %s\n", generatePassword(FLAGS));
+            printf("Default automatic generation: %s\n", 
+                    generatePassword(FLAGS));
             return 0;
         }
         
@@ -114,15 +134,28 @@ int main(int argc, char **argv) {
         }
         
         for(int i = 3; i <= argc - 1; i++) {
+            // -d and -D collision handling
+            if((!strcmp(argv[i], "-d") 
+            && u_StringInArray(duplicate_check, AVLBLGENINSTRLEN, "-D"))
+            || (!strcmp(argv[i], "-D")
+            && u_StringInArray(duplicate_check, AVLBLGENINSTRLEN, "-d"))) {
+                ERR_ARGID = i;
+                goto LERR_REDUNDANT_ARGS;
+            }
+            
+            // check if invalid argument
             if(!u_StringInArray(AVLBLGENINSTR, AVLBLGENINSTRLEN, argv[i])) {
                 ERR_ARGID = i;
                 goto LERR_UNEXPECTED_ARGS;
             }
+           
+            // check for duplicates
             if(u_StringInArray(duplicate_check, AVLBLGENINSTRLEN, argv[i])) {
                 ERR_ARGID = i;
                 goto LERR_REDUNDANT_FLAGS;
             }
-            duplicate_check[i] = argv[i];
+            
+            duplicate_check[i - 3] = argv[i];
         }
         
         free(duplicate_check);
@@ -130,19 +163,19 @@ int main(int argc, char **argv) {
         // set flags
         if(u_StringInArray(argv, argc, "-d") 
         || u_StringInArray(argv, argc, "-D")) {
-            FLAGS += (1 << 0x8);
+            u_SetBit(&FLAGS, 0x8, 1);
         }
         if(u_StringInArray(argv, argc, "-l")) {
-            FLAGS += (1 << 0x9);
+            u_SetBit(&FLAGS, 0x9, 1);
         }
         if(u_StringInArray(argv, argc, "-L")) {
-            FLAGS += (1 << 0xA);
+            u_SetBit(&FLAGS, 0xA, 1);
         }
         if(u_StringInArray(argv, argc, "-s")) {
-            FLAGS += (1 << 0xB);
+            u_SetBit(&FLAGS, 0xB, 1);
         }
         if(u_StringInArray(argv, argc, "-S")) {
-            FLAGS += (1 << 0xC);
+            u_SetBit(&FLAGS, 0xC, 1);
         }
         
         // custom generation
@@ -156,7 +189,7 @@ int main(int argc, char **argv) {
 
     return 0;
 
-    // ERROR HANDLING
+// ERROR HANDLING
 LERR_UNEXPECTED_ARGS:
     printf("PASSWORD GENERATOR ERROR: UNEXPECTED ARGUMENT \'%s\' [id:%d]\n"
            "USE 'help' TO GET MORE INFORMATION ABOUT AVAILABLE "
@@ -183,4 +216,3 @@ LERR_REDUNDANT_FLAGS:
            "USE 'help' TO GET MORE INFORMATION.\n", argv[ERR_ARGID], ERR_ARGID);
     return 1;
 }
-

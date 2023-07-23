@@ -2,7 +2,7 @@
 
 #include <string.h>
 
-// Checks if a string contains only a pure number. 1 - true, 0 - false.
+// checks if a string contains only a pure number
 unsigned int u_CheckIfPureUInt(const char *s) {
    
     unsigned int len = strlen(s);
@@ -20,8 +20,8 @@ unsigned int u_CheckIfPureUInt(const char *s) {
     return 1;
 }
 
-// Gets a string containing a number and returns it as an unsigned int.
-// It doesn't care if it's correct, anticipating it has been checked.
+// gets a string containing a number and returns it as an unsigned int
+// it doesn't care if it's correct, anticipating it has been checked
 unsigned int u_ParseUInt(const char *s) {
     
     unsigned int ui = 0;
@@ -42,6 +42,10 @@ unsigned int u_ParseUInt(const char *s) {
 // indices start from 0
 unsigned int u_GetBit(int number, unsigned int index) {
     return (number >> index) % 2;
+}
+
+void u_SetBit(int *number, unsigned int index, unsigned int value) {
+    *number = (*number & ~(1 << index)) | (value << index);
 }
 
 // checks if a string is present in an array of strings

@@ -1,7 +1,15 @@
 /* info.c - prints general information about the program. */
 
 #include <stdio.h>
-#include "psw.h"
+
+extern char *VERSION;
+extern char *LAST_UPD;
+
+
+
+const char *LAST_UPD_INFO = "1) Imlemented 'help' command: $ psw help [INSTRUCTION]\n"
+                            "2) Fixed too low -d and -s characters frequency with -l and/or -L.\n"
+                            "3) Fixed -d/-D options possible collision in input.\n";
 
 // Prints general information about the program.
 void printInfo() {
@@ -18,6 +26,7 @@ void printInfo() {
 	       "\t4. Manage your list!\n"
 	       "\t5. It's completely FREE and open-source!\n"
 	       "Use 'help' for more information.\n", VERSION, LAST_UPD);
+    printf("Last update details:\n%s", LAST_UPD_INFO);
 }
 
 // Prints reduced information.
