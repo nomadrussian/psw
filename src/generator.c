@@ -19,28 +19,29 @@
  *     bit   [12] : -S       | includes additional symbols "'+,-./:;<=>?[\]_
  *                           |                             `{|}~ and <space>
  * ---------------------------------------------------------------------- */
-char *generatePassword(int FLAGS) {
-    
+char *generatePassword(int FLAGS, int seed_shift)
+{
     // -l + -L + -s*2 + -S*2 + -d*2 + \0 = 139
-    char *char_set = malloc(139 * sizeof(char)); 
+    char *char_set = malloc(139 * sizeof(char));
     char *password = malloc((FLAGS % 0x100) * sizeof(char));
     
-    int base_is_set = 0;
+    _Bool base_is_set = 0;
     const char *d = "0123456789";
     const char *l = "abcdefghijklmnopqrstuvwxyz";
     const char *L = "ABCDEFGHIJKLMNOPQRSTUVWXYZ";
     const char *s = "!@#$%^&*()";
-    const char *S = "\"'+,-./:;<=>?[\\]_`{|}~ ";
+    const char *S = "\"'+,-./:;<=>\?[\\]_`{|}~ ";
     
     // setting -d or -D
     if(u_GetBit(FLAGS, 0x8)) {
-        
         strcpy(char_set, d);
         base_is_set = 1;
+
         // improve frequency in case of -l
         if(u_GetBit(FLAGS, 0x9)) {
             strcat(char_set, d);
         }
+
         // improve frequency in case of -L
         if(u_GetBit(FLAGS, 0xA)) {
             strcat(char_set, d);
@@ -75,10 +76,12 @@ char *generatePassword(int FLAGS) {
         } else {
             strcat(char_set, s);
         }
+
         // improve frequency in case of -l
         if(u_GetBit(FLAGS, 0x9)) {
             strcat(char_set, s);
         }
+
         // improve frequency in case of -L
         if(u_GetBit(FLAGS, 0xA)) {
             strcat(char_set, s);
@@ -98,23 +101,22 @@ char *generatePassword(int FLAGS) {
     unsigned long seed = time(NULL);
     unsigned long useless_garbage = (unsigned long) &useless_garbage;
     
-    seed ^= (useless_garbage * (seed * 0xCAFE + useless_garbage % 0xBEEF))
-             >> (seed % 0x4) * seed * 0x50BAD;
+    seed ^= ((useless_garbage * (seed * 0xCAFE + useless_garbage % 0xBEEF))
+             >> (seed % 0x4)) * seed * /*THIS_CODE_IS*/0x50BAD + seed_shift;
     
     for(int i = 0; i < FLAGS % 0x100; i++) {
-        password[i] = randomChar(char_set, seed + i + (useless_garbage 
-                                                      * seed + 0xF00D));
+        password[i] = randomChar(char_set, seed * (seed_shift + 1) + i
+                      + (useless_garbage * seed_shift + 0xF00D));
     }
     
     free(char_set);
-    
     return password;
 }
 
 // it's obvious what it does
-char randomChar(char *char_set, unsigned long seed) {
-    
-    srand(seed);
-    
+char randomChar(char *char_set, unsigned long seed)
+{
+    srand(seed);   
     return char_set[rand() % (strlen(char_set))];
 }
+

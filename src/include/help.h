@@ -1,6 +1,8 @@
 /* help.h */
 
 void printMainHelp();
-void printGenHelp();
-void printHelpHelp();
 void printInfoHelp();
+void printHelpHelp();
+void printGenHelp();
+void printGenlistHelp();
+

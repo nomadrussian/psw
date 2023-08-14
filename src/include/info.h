@@ -1,4 +1,5 @@
 /* info.h */
 
-int printInfo();
-int printBriefInfo();
+void printInfo();
+void printBriefInfo();
+

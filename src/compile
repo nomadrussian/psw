@@ -1,13 +1,14 @@
 
-source_files=$(cat << EOF
+source_files=$(cat << FILES
+    errorHandler.c
     generator.c
     help.c
     info.c
     labelHandler.c
     psw.c
     pswUtil.c
-EOF
+FILES
 )
 
-gcc $source_files -I./include -o ../bin/v0.3/psw
+gcc -Wall $source_files -I./include -o ../bin/v0.4/psw
 

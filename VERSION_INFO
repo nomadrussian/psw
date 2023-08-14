@@ -56,7 +56,25 @@
 |                           |
 |   v0.3 : July 23, 2023    |
 |                           | 
--------------------------------------------------------------------------
-1) Imlemented 'help' command: $ psw help [INSTRUCTION]
+------------------------------------------------------------------
+1) Implemented 'help' command: 
+       $ psw help [INSTRUCTION]
 2) Fixed too low -d and -s characters frequency with -l and/or -L.
 3) Fixed -d/-D options possible collision in input.
+------------------------------------------------------------------
+
+-------------------------------
+|                             |
+|   v0.4 : August 14, 2023    |
+|                             |
+--------------------------------------------------------------------------------
+1) Implemented 'genlist' command:
+       $ psw genlist [NUMBER OF PASSWORDS] ['gen' ARGS]
+   It generates a list of new passwords, works like 'gen'.
+2) Big refactoring, preventing a disaster that might have happened due to the
+   illogical, meaningless, just negligent coding style and architecture planning
+   leading to ridiculous intricacies and poor extensibility.
+3) Improved coding style making it more clear, so it's much easier to read,
+   navigate, and add new features.
+--------------------------------------------------------------------------------
+
