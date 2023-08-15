@@ -16,7 +16,7 @@ const char *LAST_UPD_INFO =
 // Prints general information about the program.
 void printInfo()
 {
-	printf(
+    printf(
         "Personal Password Generator and Manager.\n"
 	    "Version: %s\n"
 	    "Last update: %s\n"
@@ -41,7 +41,7 @@ void printInfo()
 // Prints brief information.
 void printBriefInfo()
 {
-	printf(
+    printf(
         "Personal Password Generator and Manager.\n"
 	    "Version: %s\n"
 	    "Last update: %s\n"
