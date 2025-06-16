@@ -5,30 +5,45 @@
 #include <stdlib.h>
 #include <string.h>
 
-#include "cli.h"
+#include "config.h"
 #include "error.h"
+#include "safe_utils.h"
 
-char password_buff[64] = { 0 };
+#include "cli.h"
+#include "masterpassword.h"
+#include "psw.h"
 
-int attempt_authorize()
+static char master_password_buff[MAX_MASTER_PASSWORD_LEN + 1] = { 0 };
+
+NOOPTIMIZE int attempt_authorize()
 {
+    if (authorized)
+    {
+        return err_AUTHORIZED;
+    }
+
+    // negative error codes mean errors, non-negative - success
     int err_code;
     if ((err_code = load_authentification_data()) < 0)
     {
         return err_code;
     }
 
-    char *master_password = CLI_get_password();
-    if (!strcmp(password_buff, master_password))
+    size_t master_password_buffer_size = 0;
+    char *master_password = CLI_get_password(&master_password_buffer_size);
+    if (!strcmp(master_password_buff, master_password))
     {
         err_code = SUCCESS;
     }
     else
     {
-        err_code = err_WRONG_MASTER_PASSWORD; 
+        err_code = err_WRONG_MASTER_PASSWORD;
     }
 
-    free(master_password); // implement safe_free()
+    if (master_password_buffer_size > 0)
+    {
+        safe_free(master_password, master_password_buffer_size);
+    }
 
     return err_code;
 }
@@ -37,14 +52,19 @@ int load_authentification_data()
 {
     FILE *f_master_password;
     
-    if (!(f_master_password = fopen("database/mp.db", "r")))
+    if (!(f_master_password = fopen(DATAPATH_MASTER_PASSWORD, "r")))
     {
-        return err_NO_MASTER_PASSWORD_FOUND;
+        return err_CORRUPTED_AUTHENTIFICATION_DATA;
     }
 
-    fgets(password_buff, 64, f_master_password);
+    fgets(master_password_buff, MAX_MASTER_PASSWORD_LEN, f_master_password);
     fclose(f_master_password);
 
     return OK;
+}
+
+NOOPTIMIZE void clear_master_password_buff()
+{
+    safe_clear(master_password_buff, MAX_MASTER_PASSWORD_LEN + 1);
 }
 

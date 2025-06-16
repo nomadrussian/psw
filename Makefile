@@ -6,7 +6,7 @@ BIN_DIR = bin
 SRC = $(wildcard $(SRC_DIR)/*.c)
 OBJ = $(patsubst $(SRC_DIR)%.c, $(OBJ_DIR)%.o, $(SRC))
 
-CC = gcc -O0 -Wall -Wextra -Werror
+CC = gcc -std=c2x -Wall -Wextra -Werror 
 
 BIN = $(BIN_DIR)/cli_psw
 LAUNCHER = psw

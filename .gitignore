@@ -1,7 +1,12 @@
+# binaries are not pushed, only sources
 bin/
 
 psw
 
+# ignoring hidden files and directories
+.*
+
+# ignoring temporary vim files
 *~
 *.swp
 *.swo

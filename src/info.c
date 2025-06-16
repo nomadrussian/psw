@@ -6,7 +6,7 @@
 
 int showup_info()
 {
-    printf("PSW VERSION\n");
+    printf("PSW %d.%d\n", VERSION_MAJOR, VERSION_MINOR);
 
     return 0;
 }

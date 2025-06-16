@@ -1,14 +1,20 @@
 #include "psw.h"
 
 #include <stdbool.h>
+#include <stdio.h>
 #include <stdlib.h>
 
-#include "authorization.h"
+#include "config.h"
 #include "error.h"
+#include "safe_utils.h"
+
+#include "authorization.h"
 #include "help.h"
 #include "info.h"
+#include "masterpassword.h"
 
 static const Command require_authorization_cmd_list[] = {
+    cmd_UNAUTHORIZE,
     cmd_GET_ALL_ENTRIES,
     cmd_GET_ENTRY,
     cmd_ADD_ENTRY,
@@ -17,7 +23,7 @@ static const Command require_authorization_cmd_list[] = {
     cmd_BACKUP
 };
 
-static bool authorized = false; 
+bool authorized = false; 
 
 int do_command(Command command)
 {
@@ -32,8 +38,10 @@ int do_command(Command command)
     {
         case cmd_AUTHORIZE:
             err_code = attempt_authorize();
-            authorized = (err_code == SUCCESS);
+            authorized = (err_code == SUCCESS || err_code == err_AUTHORIZED);
             return err_code;
+        case cmd_UNAUTHORIZE: return force_log_out();
+        case cmd_SET_MASTER_PASSWORD: return set_master_password();
         case cmd_HELP: return showup_help();
         case cmd_INFO: return showup_info();
         case cmd_QUIT: return safe_exit(0);
@@ -41,10 +49,18 @@ int do_command(Command command)
     }
 }
 
+// (plug) implement hash + salt checks
 int check_authentification_data()
 {
-    // implement after core authentification algorithm
-    return OK;
+    FILE *f_master_password;
+    int err_code = OK;
+
+    if (!(f_master_password = fopen(DATAPATH_MASTER_PASSWORD, "r")))
+    {
+        err_code = err_CORRUPTED_AUTHENTIFICATION_DATA;
+    }
+
+    return err_code;
 }
 
 bool requires_authorization(Command command)
@@ -60,11 +76,10 @@ bool requires_authorization(Command command)
     return false;
 }
 
-/* to implement clearing RAM by force */
-int safe_exit(int exit_code)
+NOOPTIMIZE int force_log_out()
 {
-    exit(exit_code);
-
-    return err_FAILED_SAFE_EXIT;
+    clear_master_password_buff();
+    authorized = false;
+    return LOGGED_OUT;
 }
 

@@ -3,6 +3,7 @@
 
 #include <stdbool.h>
 
+#include "config.h"
 #include "error.h"
 
 typedef enum {
@@ -13,6 +14,7 @@ typedef enum {
     cmd_REMOVE_ENTRY, // priority: ESSENTIAL
     cmd_BACKUP, // priority: middle
     cmd_AUTHORIZE, // priority: ESSENTIAL
+    cmd_UNAUTHORIZE, // priority: ESSENTIAL
     cmd_SET_MASTER_PASSWORD, // priority: ESSENTIAL
     cmd_GENERATE_PASSWORD, // priority: 0 just so it does something useful + safe rand
     cmd_CHECK_PASSWORD_SAFETY, // priority: last
@@ -23,10 +25,12 @@ typedef enum {
     cmd_UNKNOWN_COMMAND
 } Command;
 
+extern bool authorized;
+
 int do_command(Command command);
 int check_authentification_data();
 bool requires_authorization(Command command);
-int safe_exit(int exit_code);
+NOOPTIMIZE int force_log_out();
 
 #endif
 

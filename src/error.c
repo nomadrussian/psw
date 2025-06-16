@@ -3,14 +3,20 @@
 #include <stdio.h>
 
 const Error ErrorMap[] = {
-    { SUCCESS, SUCCESS_MSG },
-    { OK, OK_MSG },
-    { err_UNKNOWN_COMMAND, err_UNKNOWN_COMMAND_MSG },
-    { err_UNAUTHORIZED, err_UNAUTHORIZED_MSG},
-    { err_NO_MASTER_PASSWORD_FOUND, err_NO_MASTER_PASSWORD_FOUND_MSG },
-    { err_WRONG_MASTER_PASSWORD, err_WRONG_MASTER_PASSWORD_MSG },
-    { err_FAILED_SAFE_EXIT, err_FAILED_SAFE_EXIT_MSG },
-    { err_UNKNOWN_ERROR, err_UNKNOWN_ERROR_MSG }
+    { LOGGED_OUT, msg_LOGGED_OUT },
+    { SUCCESS, msg_SUCCESS },
+    { OK, msg_OK },
+    { err_UNKNOWN_COMMAND, errmsg_UNKNOWN_COMMAND },
+    { err_UNAUTHORIZED, errmsg_UNAUTHORIZED },
+    { err_AUTHORIZED, errmsg_AUTHORIZED },
+    { err_CORRUPTED_AUTHENTIFICATION_DATA, errmsg_CORRUPTED_AUTHENTIFICATION_DATA },
+    { err_WRONG_MASTER_PASSWORD, errmsg_WRONG_MASTER_PASSWORD },
+    { err_FAILED_TO_SET_MASTER_PASSWORD, errmsg_FAILED_TO_SET_MASTER_PASSWORD },
+    { err_PASSWORD_DOES_NOT_MEET_REQUIREMENTS, errmsg_PASSWORD_DOES_NOT_MEET_REQUIREMENTS },
+    { err_FAILED_SAFE_EXIT, errmsg_FAILED_SAFE_EXIT },
+    { err_UNKNOWN_ERROR, errmsg_UNKNOWN_ERROR },
+    { err_NULLPTR_FREE_ATTEMPT, errmsg_NULLPTR_FREE_ATTEMPT },
+    { err_NULLPTR_CLEAR_ATTEMPT, errmsg_NULLPTR_CLEAR_ATTEMPT }
 };
 
 void showup_err(int err_code)
@@ -20,11 +26,11 @@ void showup_err(int err_code)
         Error err = ErrorMap[i];
         if (err_code == err.err_code)
         {
-            printf("%s\n", err.err_msg);
+            printf("# %s\n", err.errmsg);
             return;
         }
     }
 
-    printf("%s\n", err_UNKNOWN_ERROR_MSG);
+    printf("%s\n", errmsg_UNKNOWN_ERROR);
 }
 
