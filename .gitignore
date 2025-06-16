@@ -2,3 +2,7 @@ bin/
 
 psw
 
+*~
+*.swp
+*.swo
+
