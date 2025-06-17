@@ -1,0 +1,29 @@
+[v] basic command handling
+[v] authorization
+[v] master password saving
+[] adding, reading and removing entries from the database
+[] master password hashing (external lib) + using salt
+[] generating key using Argon2id (external lib) based on master password + using salt
+[] AES encryption (external lib)
+[] unit tests for encryption
+-------- 0.1 --------
+
+[] reading individual entries
+[] editing entries
+[] hiding passwords when typing in (**********)
+[] backups and imports
+[] logging
+-------- 0.2 --------
+
+[] custom password generator
+[] custom salt generator
+[] hashes generator (
+    md5, sha-1, sha-2, sha-3, BLAKE2, BLAKE3, CRC32, CRC64, xxHASH, MurmurHash3
+)
+[] password safety check
+-------- 0.3 --------
+
+[] DOCUMENTATION (+info, help)
+-------- 0.3.1 -------
+
+
