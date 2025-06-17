@@ -1,17 +1,17 @@
 #include "psw.h"
 
-#include <stdbool.h>
-#include <stdio.h>
-#include <stdlib.h>
-
 #include "config.h"
 #include "error.h"
-#include "safe_utils.h"
+
+#include <stdio.h>
+#include <stdlib.h>
 
 #include "authorization.h"
 #include "help.h"
 #include "info.h"
 #include "masterpassword.h"
+
+#include "safe_util.h"
 
 static const Command require_authorization_cmd_list[] = {
     cmd_UNAUTHORIZE,
@@ -22,8 +22,6 @@ static const Command require_authorization_cmd_list[] = {
     cmd_REMOVE_ENTRY,
     cmd_BACKUP
 };
-
-bool authorized = false; 
 
 int do_command(Command command)
 {
@@ -49,20 +47,6 @@ int do_command(Command command)
     }
 }
 
-// (plug) implement hash + salt checks
-int check_authentification_data()
-{
-    FILE *f_master_password;
-    int err_code = OK;
-
-    if (!(f_master_password = fopen(DATAPATH_MASTER_PASSWORD, "r")))
-    {
-        err_code = err_CORRUPTED_AUTHENTIFICATION_DATA;
-    }
-
-    return err_code;
-}
-
 bool requires_authorization(Command command)
 {
     for (size_t i = 0; i < sizeof(require_authorization_cmd_list); i++)
@@ -74,12 +58,5 @@ bool requires_authorization(Command command)
     }
 
     return false;
-}
-
-NOOPTIMIZE int force_log_out()
-{
-    clear_master_password_buff();
-    authorized = false;
-    return LOGGED_OUT;
 }
 

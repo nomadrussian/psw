@@ -4,12 +4,11 @@ SRC_DIR = src
 BIN_DIR = bin
 
 SRC = $(wildcard $(SRC_DIR)/*.c)
-OBJ = $(patsubst $(SRC_DIR)%.c, $(OBJ_DIR)%.o, $(SRC))
-
-CC = gcc -std=c2x -Wall -Wextra -Werror 
-
+OBJ = $(patsubst $(SRC_DIR)%.c, $(BIN_DIR)%.o, $(SRC))
 BIN = $(BIN_DIR)/cli_psw
 LAUNCHER = psw
+
+CC = gcc -std=c23 -Wall -Wextra -Werror 
 
 all: $(BIN_DIR) $(BIN) $(LAUNCHER)
 
@@ -17,10 +16,15 @@ all: $(BIN_DIR) $(BIN) $(LAUNCHER)
 $(BIN_DIR):
 	@mkdir -p $(BIN_DIR) 
 
-# Compiling
-$(BIN):
-	@$(CC) $(SRC) -o $(BIN)
+# Compiling and linking
+$(BIN): $(OBJ)
+	@$(CC) $(OBJ) -o $(BIN)
+	@rm $(OBJ)
 	@chmod +x $(BIN)
+
+# Compiling into object files
+$(BIN_DIR)/%.o: $(SRC_DIR)/%.c
+	@$(CC) -c $< -o $@
 
 # Generating simple bash launcher
 $(LAUNCHER):

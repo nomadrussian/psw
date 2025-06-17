@@ -1,19 +1,41 @@
 #include "authorization.h"
 
-#include <stdbool.h>
+#include "config.h"
+#include "error.h"
+
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
-
-#include "config.h"
-#include "error.h"
-#include "safe_utils.h"
 
 #include "cli.h"
 #include "masterpassword.h"
 #include "psw.h"
 
+#include "directory.h"
+#include "safe_util.h"
+
+bool authorized = false; 
 static char master_password_buff[MAX_MASTER_PASSWORD_LEN + 1] = { 0 };
+
+// (plug) implement hash + salt checks
+int check_authentification_data()
+{
+    int err_code;
+
+    FILE *f_master_password;
+
+    if (!(f_master_password = fopen(DATA_DIR "/" DATA_FILE_MASTER_HASH, "r")))
+    {
+        err_code = err_CORRUPTED_AUTHENTIFICATION_DATA;
+    }
+    else
+    {
+        fclose(f_master_password);
+        err_code = OK;
+    }
+
+    return err_code;
+}
 
 NOOPTIMIZE int attempt_authorize()
 {
@@ -52,7 +74,7 @@ int load_authentification_data()
 {
     FILE *f_master_password;
     
-    if (!(f_master_password = fopen(DATAPATH_MASTER_PASSWORD, "r")))
+    if (!(f_master_password = fopen(DATA_DIR "/" DATA_FILE_MASTER_HASH, "r")))
     {
         return err_CORRUPTED_AUTHENTIFICATION_DATA;
     }
@@ -61,6 +83,13 @@ int load_authentification_data()
     fclose(f_master_password);
 
     return OK;
+}
+
+NOOPTIMIZE int force_log_out()
+{
+    clear_master_password_buff();
+    authorized = false;
+    return LOGGED_OUT;
 }
 
 NOOPTIMIZE void clear_master_password_buff()

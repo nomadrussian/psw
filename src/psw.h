@@ -1,8 +1,6 @@
 #ifndef PSW_H
 #define PSW_H
 
-#include <stdbool.h>
-
 #include "config.h"
 #include "error.h"
 
@@ -28,9 +26,7 @@ typedef enum {
 extern bool authorized;
 
 int do_command(Command command);
-int check_authentification_data();
 bool requires_authorization(Command command);
-NOOPTIMIZE int force_log_out();
 
 #endif
 

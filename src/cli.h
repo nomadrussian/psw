@@ -1,7 +1,6 @@
-#ifndef CLI_h
-#define CLI_h
+#ifndef CLI_H
+#define CLI_H
 
-#include <stdbool.h>
 #include <stddef.h>
 
 #include "psw.h"
@@ -10,6 +9,7 @@
 
 void CLI_run(int authentification_data_status);
 void CLI_greet();
+void CLI_showup_msg(const char *msg);
 Command CLI_get_next_command();
 Command parse_command(const char *buff);
 

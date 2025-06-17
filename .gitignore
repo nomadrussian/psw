@@ -1,5 +1,6 @@
 # binaries are not pushed, only sources
 bin/
+dt/
 
 psw
 

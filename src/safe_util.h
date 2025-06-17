@@ -1,10 +1,9 @@
-#ifndef SAFE_UTILS_H
-#define SAFE_UTILS_H
-
-#include <stdbool.h>
-#include <stddef.h>
+#ifndef SAFE_UTIL_H
+#define SAFE_UTIL_H
 
 #include "config.h"
+
+#include <stddef.h>
 
 NOOPTIMIZE int safe_clear(void *address, size_t size);
 NOOPTIMIZE int safe_free(void *address, size_t size);

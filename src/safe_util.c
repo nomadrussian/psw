@@ -1,17 +1,17 @@
-#include "safe_utils.h"
+#include "safe_util.h"
 
-#include <stdbool.h>
+#include "config.h"
+#include "error.h"
+
 #include <stddef.h>
 #include <stdlib.h>
 #include <string.h>
 
-#include "config.h"
-#include "error.h"
-#include "safe_utils.h"
+#include "safe_util.h"
 
 NOOPTIMIZE int safe_clear(void *address, size_t size)
 {
-    if (address == NULL)
+    if (address == nullptr)
     {
         return err_NULLPTR_CLEAR_ATTEMPT;
     }
@@ -23,7 +23,7 @@ NOOPTIMIZE int safe_clear(void *address, size_t size)
 
 NOOPTIMIZE int safe_free(void *address, size_t size)
 {
-    if (address == NULL)
+    if (address == nullptr)
     {
         return err_NULLPTR_FREE_ATTEMPT;
     }
